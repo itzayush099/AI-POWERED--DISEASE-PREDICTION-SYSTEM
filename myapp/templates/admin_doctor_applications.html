@@ -1,0 +1,123 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">Doctor Applications</h2>
+      <p class="text-muted m-0 mt-1">Review and manage pending doctor requests.</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" class="btn-saas-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  {% if messages %}
+    <div class="mb-4">
+      {% for m in messages %}
+        <div class="alert alert-{{ m.tags|default:'info' }} saas-card border-0 py-2 px-3 text-sm mb-2" role="alert" style="border-left: 4px solid var(--{% if m.tags == 'error' or m.tags == 'danger' %}danger{% elif m.tags == 'success' %}success{% elif m.tags == 'warning' %}warning{% else %}primary{% endif %}-color) !important;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>{{ m }}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="saas-card border-0">
+    <div class="saas-card-body p-0">
+      {% if applications %}
+        <div class="saas-table-wrapper border-0 rounded-0 shadow-none">
+          <table class="saas-table mb-0 align-middle">
+            <thead>
+              <tr>
+                <th class="bg-transparent text-muted">User</th>
+                <th class="bg-transparent text-muted">Contact Info</th>
+                <th class="bg-transparent text-muted">Qualifications</th>
+                <th class="bg-transparent text-muted text-center">Status</th>
+                <th class="bg-transparent text-muted">Submitted</th>
+                <th class="bg-transparent text-muted">Admin Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for app in applications %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                      {{ app.full_name|slice:":1"|upper }}
+                    </div>
+                    <div>
+                      <div class="fw-medium text-dark">{{ app.full_name }}</div>
+                      <div class="text-muted small">@{{ app.user.username }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-sm text-muted">
+                    <div><i class="bi bi-envelope me-1"></i> {{ app.user.email|default:"-" }}</div>
+                    {% if app.resume %}
+                      <a href="{{ app.resume.url }}" target="_blank" class="mt-1 d-inline-block text-primary text-decoration-none fw-medium"><i class="bi bi-file-earmark-pdf me-1"></i> View Resume</a>
+                    {% endif %}
+                  </div>
+                </td>
+                <td>
+                  <div class="fw-medium text-dark">{{ app.specialization }}</div>
+                  <div class="text-muted small">{{ app.experience_years }} year(s) exp.</div>
+                  {% if app.qualifications %}
+                  <div class="text-muted small mt-1" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ app.qualifications }}
+                  </div>
+                  {% endif %}
+                </td>
+                
+                <td class="text-center">
+                  {% if app.status == "pending" %}
+                    <span class="saas-badge saas-badge-warning"><i class="bi bi-clock-history me-1"></i> Pending</span>
+                  {% elif app.status == "approved" %}
+                    <span class="saas-badge saas-badge-success"><i class="bi bi-check-circle me-1"></i> Approved</span>
+                  {% else %}
+                    <span class="saas-badge saas-badge-danger"><i class="bi bi-x-circle me-1"></i> Rejected</span>
+                  {% endif %}
+                </td>
+
+                <td class="text-muted text-sm">{{ app.created_at|date:"d M Y, H:i" }}</td>
+
+                <td style="min-width: 240px;">
+                  {% if app.status == "pending" %}
+                    <form method="post" class="d-flex flex-column gap-2">
+                      {% csrf_token %}
+                      <input type="hidden" name="application_id" value="{{ app.id }}">
+                      <textarea name="admin_notes" class="saas-form-control text-sm" placeholder="Add optional note..." rows="1"></textarea>
+                      <div class="d-flex gap-2">
+                        <button type="submit" name="action" value="approve" class="btn btn-sm btn-success flex-grow-1 border-0" style="background-color: var(--success-color);">Approve</button>
+                        <button type="submit" name="action" value="reject" class="btn btn-sm btn-danger flex-grow-1 border-0" style="background-color: var(--danger-color);">Reject</button>
+                      </div>
+                    </form>
+                  {% else %}
+                    <div class="text-sm p-2 rounded bg-light border text-muted">
+                      <strong>Admin Note:</strong><br>
+                      {{ app.admin_notes|default:"No notes added." }}
+                    </div>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-5 text-muted">
+          <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; background: #F3F4F6; color: #9CA3AF; border-radius: 50%;">
+            <i class="bi bi-inbox fs-2"></i>
+          </div>
+          <h5 class="fw-bold text-dark">No Pending Applications</h5>
+          <p class="mb-0">When users apply to become doctors, their requests will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock main %}

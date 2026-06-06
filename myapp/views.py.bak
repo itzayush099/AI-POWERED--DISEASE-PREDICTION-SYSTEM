@@ -1,0 +1,124 @@
+from django.shortcuts import render, redirect
+import os
+import joblib
+import pandas as pd
+from .models import History
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
+
+
+# ---------------- SIGNUP ----------------
+def signup_view(request):
+    if request.method == "POST":
+        fullname = request.POST.get("fullname")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        # 1. Check passwords match
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect("signup")
+
+        # 2. Check if user already exists
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "User with this email already exists")
+            return redirect("signup")
+
+        # 3. Create the user
+        user = User.objects.create_user(
+            username=email,   # we’ll use email as username
+            email=email,
+            password=password,
+            first_name=fullname  # saving full name
+        )
+        user.save()
+
+        messages.success(request, "Account created successfully! Please log in.")
+        return redirect("login")   # ✅ redirect to login page after signup
+
+    return render(request, "signup.html")
+
+
+# ---------------- LOGIN ----------------
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth_login(request, user)   # ✅ correct Django login
+            return redirect("prediction")  # redirect to prediction page after login
+        else:
+            messages.error(request, "Invalid username or password")
+            return redirect("login")
+
+    return render(request, "login.html")  # GET request → show login page
+
+
+# ---------------- MODEL LOAD ----------------
+path = os.path.dirname(__file__)
+model = joblib.load(open(os.path.join(path, 'best_model.pkl'), 'rb'))
+label_encoder = joblib.load(open(os.path.join(path, 'label_Encoder.pkl'), 'rb'))
+
+
+# ---------------- VIEWS ----------------
+def index(req):
+    return render(req, "index.html")
+
+
+@login_required(login_url="login")   # 🔒 only logged-in users can access
+def prediction(req):
+    if req.method == 'POST':
+        fever = req.POST['fever']
+        headache = req.POST['headache']
+        nausea = req.POST['nausea']
+        vomiting = req.POST['vomiting']
+        fatigue = req.POST['fatigue']
+        joint_pain = req.POST['joint_pain']
+        skin_rash = req.POST['skin_rash']
+        cough = req.POST['cough']
+        weight_loss = req.POST['weight_loss']
+        yellow_eyes = req.POST['yellow_eyes']
+
+        symptoms = [
+            'fever','headache','nausea','vomiting','fatigue',
+            'joint_pain','skin_rash','cough','weight_loss','yellow_eyes'
+        ]
+        user_inputs = [
+            fever, headache, nausea, vomiting, fatigue,
+            joint_pain, skin_rash, cough, weight_loss, yellow_eyes
+        ]
+
+        input_df = pd.DataFrame([user_inputs], columns=symptoms)
+        result = model.predict(input_df)[0]
+        res = label_encoder.inverse_transform([result])[0]
+
+        # Save to history
+        his = History(
+            fever=fever, headache=headache, nausea=nausea,
+            vomiting=vomiting, fatigue=fatigue,
+            joint_pain=joint_pain, skin_rash=skin_rash,
+            cough=cough, weight_loss=weight_loss,
+            yellow_eyes=yellow_eyes, res=res
+        )
+        his.save()
+
+        return render(req, "prediction.html", {"res": res})
+
+    return render(req, "prediction.html")
+
+
+@login_required(login_url="login")   # 🔒 only logged-in users can access
+def history(req):
+    his = History.objects.all()  # select * from history
+    return render(req, "history.html", {"his": his})
+def logout_view(request):
+    logout(request)
+    return redirect("login")  # redirect to login page after logout

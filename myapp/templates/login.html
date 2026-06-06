@@ -1,0 +1,45 @@
+{% extends "parent.html" %}
+
+{% block main %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="col-md-6 col-lg-5">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color: var(--text-primary); letter-spacing: -0.03em;">Welcome back</h2>
+      <p class="text-muted">Enter your credentials to access your dashboard</p>
+    </div>
+
+    <div class="saas-card shadow-lg p-4 p-md-5 border-0">
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-danger py-2 px-3 text-sm rounded" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <div class="mb-4">
+          <label for="username" class="saas-form-label">Username</label>
+          <input type="text" id="username" name="username" class="saas-form-control" placeholder="Enter your username" required autofocus>
+        </div>
+        
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <label for="password" class="saas-form-label mb-0">Password</label>
+            <a href="{% url 'reset_password' %}" class="text-sm fw-medium" style="font-size: 0.875rem;">Forgot password?</a>
+          </div>
+          <input type="password" id="password" name="password" class="saas-form-control mt-2" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="btn-saas-primary w-100 py-2 mt-2" style="font-size: 1rem;">Log in</button>
+      </form>
+    </div>
+
+    <p class="text-center mt-4 text-muted" style="font-size: 0.875rem;">
+      Don't have an account? <a href="{% url 'signup' %}" class="fw-medium">Sign up here</a>
+    </p>
+  </div>
+</div>
+{% endblock main %}

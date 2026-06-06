@@ -1,0 +1,92 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-3 border-bottom">
+    <div class="d-flex align-items-center gap-3">
+      <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: var(--primary-color); font-size: 1.2rem;">
+        {{ patient.first_name|default:patient.username|slice:":1"|upper }}
+      </div>
+      <div>
+        <h3 class="fw-bold m-0 text-dark">{{ patient.first_name|default:patient.username }}'s History</h3>
+        <p class="text-muted m-0 mt-1"><i class="bi bi-envelope me-1"></i> {{ patient.email|default:"No email provided" }}</p>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'chat_view' patient.id %}" class="btn-saas-primary">
+        <i class="bi bi-chat-dots me-1"></i> Message Patient
+      </a>
+      <a href="{% url 'doctor_dashboard' %}" class="btn-saas-secondary">
+        Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="saas-card border-0">
+    <div class="saas-card-body p-0">
+      {% if histories %}
+        <div class="saas-table-wrapper border-0 rounded-0 shadow-none">
+          <table class="saas-table mb-0 align-middle">
+            <thead>
+              <tr>
+                <th class="bg-transparent text-muted">Date / Time</th>
+                <th class="bg-transparent text-muted">Symptoms</th>
+                <th class="bg-transparent text-muted">Prediction Result</th>
+                <th class="bg-transparent text-muted">Doctor Notes</th>
+                <th class="bg-transparent text-muted text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for h in histories %}
+                <tr>
+                  <td class="fw-medium text-dark text-nowrap">{{ h.created_at|date:"d M Y, H:i" }}</td>
+                  <td>
+                    <div class="d-flex flex-wrap gap-1" style="max-width: 250px;">
+                      {% if h.fever != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Fever: {{h.fever}}</span>{% endif %}
+                      {% if h.headache != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Headache: {{h.headache}}</span>{% endif %}
+                      {% if h.nausea != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Nausea: {{h.nausea}}</span>{% endif %}
+                      {% if h.vomiting != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Vomiting: {{h.vomiting}}</span>{% endif %}
+                      {% if h.fatigue != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Fatigue: {{h.fatigue}}</span>{% endif %}
+                      {% if h.joint_pain != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Joint Pain: {{h.joint_pain}}</span>{% endif %}
+                      {% if h.skin_rash != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Skin Rash: {{h.skin_rash}}</span>{% endif %}
+                      {% if h.cough != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Cough: {{h.cough}}</span>{% endif %}
+                      {% if h.weight_loss != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Weight Loss: {{h.weight_loss}}</span>{% endif %}
+                      {% if h.yellow_eyes != 'No' %}<span class="saas-badge bg-light text-muted border border-secondary border-opacity-25" style="font-size: 0.65rem;">Yellow Eyes: {{h.yellow_eyes}}</span>{% endif %}
+                    </div>
+                  </td>
+                  <td><span class="saas-badge saas-badge-warning fs-6 py-1 px-2">{{ h.res }}</span></td>
+                  <td>
+                    {% if h.doctor_notes %}
+                      <div class="text-sm text-dark mb-1" style="max-width: 280px;">{{ h.doctor_notes }}</div>
+                      <div class="text-muted" style="font-size: 0.7rem;">
+                        {% if h.reviewed_by %}Rev. by Dr. {{ h.reviewed_by.first_name|default:h.reviewed_by.username }}{% endif %}
+                        {% if h.reviewed_at %}({{ h.reviewed_at|date:"d M" }}){% endif %}
+                      </div>
+                    {% else %}
+                      <span class="text-muted small fst-italic">No notes yet</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-end">
+                    <a href="{% url 'doctor_history_review' h.id %}" class="btn-saas-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.75rem;">
+                      <i class="bi bi-pencil-square me-1"></i> Review
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-5 text-muted">
+          <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; background: #F3F4F6; color: #9CA3AF; border-radius: 50%;">
+            <i class="bi bi-clipboard2-x fs-2"></i>
+          </div>
+          <p class="mb-0 fw-medium">No history found for this patient.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock main %}

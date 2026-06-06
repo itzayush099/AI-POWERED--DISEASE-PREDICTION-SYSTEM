@@ -1,0 +1,148 @@
+{% extends "parent.html" %}
+
+{% block main %}
+<div class="row justify-content-center py-4">
+  <div class="col-lg-8">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">My Profile</h2>
+    </div>
+
+    {% if messages %}
+      {% for m in messages %}
+        <div class="alert alert-{{ m.tags }} saas-card border-0 py-2 px-3 text-sm mb-4" role="alert" style="border-left: 4px solid var(--{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% elif m.tags == 'warning' %}warning{% else %}primary{% endif %}-color) !important;">
+          {{ m }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="saas-card border-0 mb-4">
+      <div class="saas-card-header bg-white pb-0 pt-4 px-4 border-0">
+        <h5 class="fw-bold m-0" style="color: var(--text-primary);">Account Details</h5>
+      </div>
+      
+      <div class="saas-card-body px-4 pb-4">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
+            {% if profile.profile_pic %}
+              <img src="{{ profile.profile_pic.url }}" alt="Profile picture" class="rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--border-color);">
+            {% else %}
+              <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fs-3 shadow-sm" style="width: 80px; height: 80px;">
+                {{ user.first_name|default:user.username|slice:":1"|upper }}
+              </div>
+            {% endif %}
+            
+            <div class="flex-grow-1">
+              <label for="profile_pic" class="saas-form-label">Update Profile Picture</label>
+              <input type="file" id="profile_pic" name="profile_pic" class="saas-form-control form-control-sm text-muted">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label class="saas-form-label">Full Name</label>
+              <input type="text" class="saas-form-control bg-light text-muted" value="{{ user.first_name }}" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="saas-form-label">Email Address</label>
+              <input type="email" class="saas-form-control bg-light text-muted" value="{{ user.email }}" readonly>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="phone" class="saas-form-label">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="saas-form-control" value="{{ profile.phone|default:'' }}" placeholder="Enter phone number">
+          </div>
+
+          <!-- Doctor application status -->
+          <h6 class="fw-bold mb-3 mt-5 text-dark">Doctor Application Status</h6>
+          <div class="p-3 rounded mb-4" style="background-color: var(--bg-tertiary); border: 1px solid var(--border-light);">
+            {% if latest_application %}
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-sm text-muted">Current status:</span>
+                {% if latest_application.status == "pending" %}
+                  <span class="saas-badge saas-badge-warning">Pending review</span>
+                {% elif latest_application.status == "approved" %}
+                  <span class="saas-badge saas-badge-success">Approved</span>
+                {% elif latest_application.status == "rejected" %}
+                  <span class="saas-badge saas-badge-danger">Rejected</span>
+                {% else %}
+                  <span class="saas-badge saas-badge-primary">{{ latest_application.status }}</span>
+                {% endif %}
+              </div>
+              <div class="text-sm text-muted mb-2">
+                Applied on {{ latest_application.created_at|date:"d M Y, H:i" }}
+                {% if latest_application.decided_at %}
+                  <br>Last updated {{ latest_application.decided_at|date:"d M Y, H:i" }}
+                {% endif %}
+              </div>
+              {% if latest_application.admin_notes %}
+                <div class="alert alert-info py-2 px-3 text-sm mb-0 mt-2 border-0" style="background-color: #EEF2FF; color: #4338CA;">
+                  <strong>Admin note:</strong> {{ latest_application.admin_notes }}
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted text-sm">You have not applied to become a doctor.</span>
+                <a href="{% url 'doctor_apply' %}" class="btn-saas-secondary text-sm">Apply Now</a>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Change password -->
+          <h6 class="fw-bold mb-3 mt-5 text-dark">Change Password (Optional)</h6>
+          
+          <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <label for="password" class="saas-form-label">New Password</label>
+              <input type="password" id="password" name="password" class="saas-form-control" placeholder="Leave blank to keep current">
+            </div>
+            <div class="col-md-6">
+              <label for="confirm_password" class="saas-form-label">Confirm Password</label>
+              <input type="password" id="confirm_password" name="confirm_password" class="saas-form-control" placeholder="Confirm new password">
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 pt-3 border-top mt-4">
+            <button type="submit" class="btn-saas-primary px-4 py-2">Save Changes</button>
+            <a href="{% url 'index' %}" class="btn-saas-secondary px-4 py-2 text-decoration-none">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if reviewed_histories %}
+      <div class="saas-card border-0 mb-5">
+        <div class="saas-card-header bg-white pb-0 pt-4 px-4 border-0">
+          <h5 class="fw-bold m-0" style="color: var(--text-primary);">Recent Doctor Reviews</h5>
+        </div>
+        <div class="saas-card-body px-4 pb-2">
+          <div class="list-group list-group-flush">
+            {% for h in reviewed_histories %}
+              <div class="list-group-item px-0 py-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <strong class="text-dark">{{ h.res }}</strong>
+                  <span class="text-muted small">{{ h.created_at|date:"d M Y" }}</span>
+                </div>
+                {% if h.reviewed_by %}
+                  <div class="text-sm text-primary mb-2">
+                    <i class="bi bi-person-badge me-1"></i> Reviewed by Dr. {{ h.reviewed_by.first_name|default:h.reviewed_by.username }}
+                  </div>
+                {% endif %}
+                {% if h.doctor_notes %}
+                  <div class="p-3 rounded text-sm text-dark mt-2" style="background-color: var(--bg-tertiary);">
+                    {{ h.doctor_notes }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock main %}

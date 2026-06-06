@@ -1,0 +1,278 @@
+{% extends "parent.html" %}
+
+{% block main %}
+<div class="py-4">
+  
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">Admin Dashboard</h2>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{% url 'admin_doctor_applications' %}" class="btn-saas-secondary"><i class="bi bi-envelope-paper me-1 text-primary"></i> Applications</a>
+      <a href="{% url 'admin_doctors' %}" class="btn-saas-secondary"><i class="bi bi-heart-pulse me-1 text-success"></i> Doctors</a>
+      <a href="{% url 'admin_patients' %}" class="btn-saas-secondary"><i class="bi bi-person me-1 text-warning"></i> Patients</a>
+      <a href="{% url 'admin_reports' %}" class="btn-saas-secondary"><i class="bi bi-bar-chart me-1 text-info"></i> Reports</a>
+      <a href="{% url 'admin_users' %}" class="btn-saas-primary"><i class="bi bi-people me-1"></i> Manage Users</a>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="saas-card border-0 h-100 p-4">
+        <h6 class="text-muted fw-medium mb-2">Total Users</h6>
+        <h2 class="fw-bold text-primary mb-0">{{ total_users }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="saas-card border-0 h-100 p-4">
+        <h6 class="text-muted fw-medium mb-2">Total Predictions</h6>
+        <h2 class="fw-bold text-success mb-0">{{ total_history }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="saas-card border-0 h-100 p-4">
+        <h6 class="text-muted fw-medium mb-2">Today's Predictions</h6>
+        <h2 class="fw-bold text-danger mb-0">{{ history_today }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="saas-card border-0 h-100 p-4">
+        <h6 class="text-muted fw-medium mb-2">Last 7 Days</h6>
+        <h2 class="fw-bold text-info mb-0">{{ history_last_7 }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="saas-card border-0 mb-4 p-4">
+    <h6 class="fw-bold mb-3 text-dark">Filter Analytics</h6>
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="saas-form-label">Start Date</label>
+        <input type="date" name="start_date" class="saas-form-control" value="{{ start_date }}">
+      </div>
+      <div class="col-md-3">
+        <label class="saas-form-label">End Date</label>
+        <input type="date" name="end_date" class="saas-form-control" value="{{ end_date }}">
+      </div>
+      <div class="col-md-4">
+        <label class="saas-form-label">Disease</label>
+        <select name="disease" class="saas-form-control">
+          <option value="all">All Diseases</option>
+          {% for d in disease_options %}
+            <option value="{{ d }}" {% if d == selected_disease %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button type="submit" class="btn-saas-primary flex-grow-1">Filter</button>
+        <a href="{% url 'admin_dashboard' %}" class="btn-saas-secondary">Reset</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Charts -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="saas-card border-0 h-100 p-4">
+        <h6 class="fw-bold mb-4 text-dark">Predictions in Last 7 Days</h6>
+        <div style="position: relative; height: 250px;">
+          <canvas id="predictionsLineChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="saas-card border-0 h-100 p-4">
+        <h6 class="fw-bold mb-4 text-dark">Top Diseases Overview</h6>
+        <div style="position: relative; height: 250px;">
+          <canvas id="diseaseBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Diseases & Top Users -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="saas-card border-0 h-100">
+        <div class="saas-card-header bg-white border-bottom-0 pb-0 pt-4 px-4">
+          <h6 class="fw-bold m-0 text-dark">Top Predicted Diseases</h6>
+        </div>
+        <div class="saas-card-body p-0 mt-3">
+          {% if filtered_top_diseases %}
+          <div class="saas-table-wrapper border-0 border-top rounded-0 shadow-none">
+            <table class="saas-table mb-0">
+              <thead>
+                <tr>
+                  <th class="bg-transparent text-muted">#</th>
+                  <th class="bg-transparent text-muted">Disease</th>
+                  <th class="bg-transparent text-muted text-end">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d in filtered_top_diseases %}
+                <tr>
+                  <td class="text-muted">{{ forloop.counter }}</td>
+                  <td class="fw-medium">{{ d.res }}</td>
+                  <td class="text-end"><span class="saas-badge saas-badge-primary">{{ d.count }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-5 text-muted">No data available.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="saas-card border-0 h-100">
+        <div class="saas-card-header bg-white border-bottom-0 pb-0 pt-4 px-4">
+          <h6 class="fw-bold m-0 text-dark">Most Active Users</h6>
+        </div>
+        <div class="saas-card-body p-0 mt-3">
+          {% if top_users %}
+          <div class="saas-table-wrapper border-0 border-top rounded-0 shadow-none">
+            <table class="saas-table mb-0">
+              <thead>
+                <tr>
+                  <th class="bg-transparent text-muted">User</th>
+                  <th class="bg-transparent text-muted">Email</th>
+                  <th class="bg-transparent text-muted text-end">Reqs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for u in top_users %}
+                <tr>
+                  <td class="fw-medium">{{ u.first_name|default:u.username }}</td>
+                  <td class="text-muted">{{ u.email }}</td>
+                  <td class="text-end"><span class="saas-badge saas-badge-success">{{ u.history_count }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-5 text-muted">No user data available.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Predictions -->
+  <div class="saas-card border-0">
+    <div class="saas-card-header bg-white border-bottom-0 pb-0 pt-4 px-4">
+      <h6 class="fw-bold m-0 text-dark">Recent Predictions</h6>
+    </div>
+    <div class="saas-card-body p-0 mt-3">
+      {% if recent_predictions %}
+      <div class="saas-table-wrapper border-0 border-top rounded-0 shadow-none">
+        <table class="saas-table mb-0">
+          <thead>
+            <tr>
+              <th class="bg-transparent text-muted">User</th>
+              <th class="bg-transparent text-muted">Email</th>
+              <th class="bg-transparent text-muted">Disease</th>
+              <th class="bg-transparent text-muted text-end">Date / Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for h in recent_predictions %}
+            <tr>
+              <td class="fw-medium">{{ h.user.first_name|default:h.user.username }}</td>
+              <td class="text-muted">{{ h.user.email }}</td>
+              <td><span class="saas-badge saas-badge-warning">{{ h.res }}</span></td>
+              <td class="text-muted text-end text-nowrap">{{ h.created_at|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-muted">No predictions found.</div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Scripts for Charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const chartLabelsDays = {{ chart_labels_days_json|safe }};
+  const chartCountsDays = {{ chart_counts_days_json|safe }};
+
+  const diseaseLabels = [
+    {% for d in filtered_top_diseases %}
+      "{{ d.res }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const diseaseCounts = [
+    {% for d in filtered_top_diseases %}
+      {{ d.count }}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  // Colors
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#4F46E5';
+  const primaryLight = getComputedStyle(document.documentElement).getPropertyValue('--primary-light').trim() || '#EEF2FF';
+
+  // Line chart - last 7 days
+  const ctxLine = document.getElementById('predictionsLineChart').getContext('2d');
+  new Chart(ctxLine, {
+    type: 'line',
+    data: {
+      labels: chartLabelsDays,
+      datasets: [{
+        label: 'Predictions',
+        data: chartCountsDays,
+        fill: true,
+        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+        borderColor: primaryColor,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: primaryColor,
+        pointBorderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { 
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { borderDash: [2, 4], color: '#E5E7EB' }, border: { display: false } },
+        x: { grid: { display: false }, border: { display: false } }
+      }
+    }
+  });
+
+  // Bar chart - top diseases
+  const ctxBar = document.getElementById('diseaseBarChart').getContext('2d');
+  new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+      labels: diseaseLabels,
+      datasets: [{
+        label: 'Count',
+        data: diseaseCounts,
+        backgroundColor: primaryColor,
+        borderRadius: 4,
+        barThickness: 30
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { 
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { borderDash: [2, 4], color: '#E5E7EB' }, border: { display: false } },
+        x: { grid: { display: false }, border: { display: false } }
+      }
+    }
+  });
+</script>
+{% endblock main %}

@@ -1,0 +1,58 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="row justify-content-center py-4">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">Messages</h2>
+      <span class="text-muted text-sm"><i class="bi bi-chat-dots me-1"></i> Your Conversations</span>
+    </div>
+
+    <div class="saas-card border-0 shadow-sm">
+      <div class="saas-card-body p-0">
+        {% if conversations %}
+          <div class="list-group list-group-flush rounded-3">
+            {% for conv in conversations %}
+              <a href="{% url 'chat_view' conv.other_user.id %}" class="list-group-item list-group-item-action p-4 border-bottom d-flex justify-content-between align-items-center transition-all" style="border-color: var(--border-color) !important;">
+                
+                <div class="d-flex align-items-center gap-3">
+                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: var(--primary-color); font-size: 1.2rem;">
+                    {{ conv.other_user.first_name|default:conv.other_user.username|slice:":1"|upper }}
+                  </div>
+                  <div>
+                    <h6 class="fw-bold m-0 text-dark mb-1">{{ conv.other_user.first_name|default:conv.other_user.username }}</h6>
+                    <div class="text-muted text-sm text-truncate" style="max-width: 300px;">
+                      {{ conv.last_message.content|truncatechars:60 }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-end d-flex flex-column align-items-end">
+                  <div class="text-muted small mb-2">{{ conv.last_message.timestamp|date:"d M, H:i" }}</div>
+                  {% if conv.unread_count > 0 %}
+                    <span class="saas-badge saas-badge-danger d-inline-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px;">
+                      {{ conv.unread_count }}
+                    </span>
+                  {% else %}
+                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                  {% endif %}
+                </div>
+
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-5 text-muted">
+            <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; background: #F3F4F6; color: #9CA3AF; border-radius: 50%;">
+              <i class="bi bi-chat-square-text fs-2"></i>
+            </div>
+            <h5 class="fw-bold text-dark">No messages yet</h5>
+            <p class="mb-0">When you start a conversation, it will appear here.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock main %}

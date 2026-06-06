@@ -1,0 +1,206 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="row justify-content-center py-4">
+  <div class="col-lg-9">
+
+    <div class="text-center mb-4 pb-2">
+      <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">Disease Prediction</h2>
+      <p class="text-muted mt-1">Select your symptoms below to get an AI-powered preliminary assessment.</p>
+    </div>
+
+    {% if res %}
+      <!-- Result Section -->
+      <div class="saas-card border-0 mb-4 p-4 text-center shadow-sm" style="background-color: #FEF2F2; border: 1px solid #FECACA !important;">
+        <h6 class="text-uppercase fw-bold mb-1" style="color: #BE123C; letter-spacing: 0.05em; font-size: 0.8rem;">Predicted Condition</h6>
+        <h3 class="fw-bold m-0" style="color: #9F1239;">{{ res }}</h3>
+      </div>
+
+      {% if user.is_authenticated %}
+        <div class="text-center mb-4">
+          <a href="{% url 'history' %}" class="btn-saas-secondary">
+            <i class="bi bi-clock-history me-1"></i> View My History
+          </a>
+        </div>
+      {% endif %}
+
+      <div class="row g-4 mb-5">
+        <!-- Disease Advice -->
+        {% if disease_advice %}
+          <div class="col-12">
+            <div class="saas-card border-0 shadow-sm p-4">
+              <div class="d-flex gap-3">
+                <i class="bi bi-info-circle-fill fs-4 text-primary"></i>
+                <div>
+                  <h6 class="fw-bold text-dark mb-2">Important Information</h6>
+                  <p class="text-muted text-sm mb-2" style="line-height: 1.6;">{{ disease_advice }}</p>
+                  <div class="small fw-medium" style="color: var(--danger-color);"><i class="bi bi-exclamation-triangle me-1"></i> This is an automatic preliminary suggestion and should not replace a consultation with a qualified doctor.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Suggested Specialist + Chat -->
+        {% if speciality %}
+          <div class="col-12">
+            <div class="saas-card border-0 shadow-sm p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+              <div>
+                <h6 class="fw-bold text-dark mb-1">Suggested Specialist</h6>
+                <p class="text-muted text-sm m-0">For <strong>{{ res }}</strong>, you may consider consulting a <span class="saas-badge saas-badge-primary ms-1">{{ speciality }}</span></p>
+              </div>
+              
+              {% if user.is_authenticated %}
+                <div>
+                  {% if chat_doctor_user_id %}
+                    <a href="{% url 'chat_view' chat_doctor_user_id %}" class="btn-saas-primary text-nowrap">
+                      <i class="bi bi-chat-dots me-1"></i> Chat with Recommended Doctor
+                    </a>
+                  {% else %}
+                    <a href="{% url 'conversations_list' %}" class="btn-saas-secondary text-nowrap" style="color: var(--success-color); border-color: var(--success-color);">
+                      <i class="bi bi-chat-dots me-1"></i> Talk to a Doctor
+                    </a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Recommended Doctors list -->
+        {% if recommended_doctors %}
+          <div class="col-12">
+            <div class="saas-card border-0 shadow-sm">
+              <div class="saas-card-header bg-white pb-0 pt-4 px-4 border-0">
+                <h6 class="fw-bold text-dark m-0"><i class="bi bi-person-heart me-2" style="color: var(--success-color);"></i> Recommended Doctors</h6>
+              </div>
+              <div class="saas-card-body p-4">
+                <div class="row g-3">
+                  {% for d in recommended_doctors %}
+                    <div class="col-md-6 col-lg-4">
+                      <div class="p-3 border rounded h-100 bg-light transition-all" style="border-color: var(--border-color) !important;">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                          <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            {{ d.name|slice:":1"|upper }}
+                          </div>
+                          <h6 class="fw-bold m-0 text-dark text-truncate" title="{{ d.name }}">{{ d.name }}</h6>
+                        </div>
+                        <div class="text-sm text-muted">
+                          {% if d.specialization %}<div class="mb-1"><i class="bi bi-stars me-1"></i> {{ d.specialization }}</div>{% endif %}
+                          {% if d.email %}<div class="mb-1 text-truncate" title="{{ d.email }}"><i class="bi bi-envelope me-1"></i> {{ d.email }}</div>{% endif %}
+                          {% if d.phone %}<div class="m-0"><i class="bi bi-telephone me-1"></i> {{ d.phone }}</div>{% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                <div class="text-muted small mt-3 fst-italic">
+                  These doctors are suggested based on your predicted condition and the system's directory.
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Prediction Form -->
+    <div class="saas-card border-0 shadow-sm">
+      <div class="saas-card-header bg-white pb-0 pt-4 px-4 border-0">
+        <h5 class="fw-bold m-0 text-dark">Select Your Symptoms</h5>
+        <p class="text-muted text-sm m-0 mt-1">Please indicate which symptoms you are currently experiencing.</p>
+      </div>
+      <div class="saas-card-body p-4">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row g-4">
+            
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Fever</label>
+              <select class="saas-form-control" name="fever">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Headache</label>
+              <select class="saas-form-control" name="headache">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Nausea</label>
+              <select class="saas-form-control" name="nausea">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Vomiting</label>
+              <select class="saas-form-control" name="vomiting">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Fatigue</label>
+              <select class="saas-form-control" name="fatigue">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Joint Pain</label>
+              <select class="saas-form-control" name="joint_pain">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Skin Rash</label>
+              <select class="saas-form-control" name="skin_rash">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Cough</label>
+              <select class="saas-form-control" name="cough">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Weight Loss</label>
+              <select class="saas-form-control" name="weight_loss">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            
+            <div class="col-sm-6 col-md-4">
+              <label class="saas-form-label">Yellow Eyes</label>
+              <select class="saas-form-control" name="yellow_eyes">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+
+          </div>
+          
+          <div class="mt-5 pt-4 border-top text-center">
+            <button type="submit" class="btn-saas-primary px-5 py-2" style="font-size: 1.1rem; border-radius: 99px;">
+              <i class="bi bi-activity me-2"></i> Get Prediction
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock main %}

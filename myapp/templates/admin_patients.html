@@ -1,0 +1,71 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">Patient Records</h2>
+    <a href="{% url 'admin_dashboard' %}" class="btn-saas-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <div class="saas-card border-0 mb-4 p-4">
+    <form method="get" class="d-flex gap-2 align-items-center">
+      <div class="flex-grow-1" style="max-width: 400px;">
+        <div class="input-group">
+          <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+          <input type="text" name="q" placeholder="Search by username..." class="form-control border-start-0 ps-0 saas-form-control shadow-none" value="{{ request.GET.q }}">
+        </div>
+      </div>
+      <button type="submit" class="btn-saas-primary px-4">Search</button>
+      {% if request.GET.q %}
+        <a href="{% url 'admin_patients' %}" class="btn-saas-secondary">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="saas-card border-0">
+    <div class="saas-card-body p-0">
+      <div class="saas-table-wrapper border-0 rounded-0 shadow-none">
+        <table class="saas-table mb-0">
+          <thead>
+            <tr>
+              <th class="bg-transparent text-muted">ID</th>
+              <th class="bg-transparent text-muted">User</th>
+              <th class="bg-transparent text-muted">Latest Prediction Result</th>
+              <th class="bg-transparent text-muted text-end">Date / Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for h in histories %}
+            <tr>
+              <td class="text-muted">#{{ h.id }}</td>
+              <td class="fw-medium text-dark">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                    {{ h.user.username|slice:":1"|upper }}
+                  </div>
+                  {{ h.user.username }}
+                </div>
+              </td>
+              <td><span class="saas-badge saas-badge-warning">{{ h.res }}</span></td>
+              <td class="text-muted text-end">{{ h.created_at|date:"d M Y, H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center py-5 text-muted">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; background: #F3F4F6; color: #9CA3AF; border-radius: 50%;">
+                  <i class="bi bi-inbox fs-2"></i>
+                </div>
+                <p class="mb-0 fw-medium">No records found.</p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

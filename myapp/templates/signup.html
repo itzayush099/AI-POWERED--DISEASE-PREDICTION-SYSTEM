@@ -1,0 +1,53 @@
+{% extends "parent.html" %}
+
+{% block main %}
+<div class="row justify-content-center py-5">
+  <div class="col-md-8 col-lg-6">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color: var(--text-primary); letter-spacing: -0.03em;">Create your account</h2>
+      <p class="text-muted">Join us to get intelligent health insights</p>
+    </div>
+
+    <div class="saas-card shadow-lg p-4 p-md-5 border-0">
+      <form method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <label for="fullname" class="saas-form-label">Full Name</label>
+            <input type="text" id="fullname" name="fullname" class="saas-form-control" placeholder="John Doe" required>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <label for="email" class="saas-form-label">Email</label>
+            <input type="email" id="email" name="email" class="saas-form-control" placeholder="john@example.com" required>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="phone" class="saas-form-label">Phone Number</label>
+          <input type="tel" id="phone" name="phone" class="saas-form-control" placeholder="+1 (555) 000-0000" required>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <label for="password" class="saas-form-label">Password</label>
+            <input type="password" id="password" name="password" class="saas-form-control" placeholder="Create a password" required>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <label for="confirm" class="saas-form-label">Confirm Password</label>
+            <input type="password" id="confirm" name="confirm_password" class="saas-form-control" placeholder="Confirm your password" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-saas-primary w-100 py-2 mt-2" style="font-size: 1rem;">Create Account</button>
+      </form>
+    </div>
+
+    <p class="text-center mt-4 text-muted" style="font-size: 0.875rem;">
+      Already have an account? <a href="{% url 'login' %}" class="fw-medium">Log in here</a>
+    </p>
+  </div>
+</div>
+{% endblock main %}

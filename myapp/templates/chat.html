@@ -1,0 +1,82 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="row justify-content-center py-4">
+  <div class="col-lg-8">
+    
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <a href="{% url 'conversations_list' %}" class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; border: 1px solid var(--border-color);">
+        <i class="bi bi-arrow-left text-dark fs-5"></i>
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: var(--primary-color); font-size: 1.2rem;">
+          {{ other_user.first_name|default:other_user.username|slice:":1"|upper }}
+        </div>
+        <div>
+          <h4 class="fw-bold m-0 text-dark">{{ other_user.first_name|default:other_user.username }}</h4>
+          <span class="text-muted text-sm"><i class="bi bi-shield-check text-success me-1"></i> Secure Conversation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="saas-card border-0 shadow-sm d-flex flex-column" style="height: 60vh; min-height: 400px; max-height: 600px;">
+      
+      <!-- Chat Messages Area -->
+      <div class="flex-grow-1 p-4 overflow-auto" id="chat-box" style="background-color: #F9FAFB;">
+        {% for m in messages %}
+          {% if m.sender == request.user %}
+            <!-- My Message -->
+            <div class="d-flex flex-column align-items-end mb-3">
+              <div class="p-3 text-white shadow-sm" style="background-color: var(--primary-color); border-radius: 16px 16px 4px 16px; max-width: 75%; font-size: 0.95rem; line-height: 1.5;">
+                {{ m.content }}
+              </div>
+              <span class="text-muted mt-1" style="font-size: 0.7rem;">{{ m.timestamp|date:"H:i" }}</span>
+            </div>
+          {% else %}
+            <!-- Other's Message -->
+            <div class="d-flex flex-column align-items-start mb-3">
+              <div class="p-3 text-dark shadow-sm bg-white border" style="border-radius: 16px 16px 16px 4px; max-width: 75%; font-size: 0.95rem; line-height: 1.5; border-color: #E5E7EB !important;">
+                {{ m.content }}
+              </div>
+              <span class="text-muted mt-1" style="font-size: 0.7rem;">{{ m.timestamp|date:"H:i" }}</span>
+            </div>
+          {% endif %}
+        {% empty %}
+          <div class="h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px; background-color: #F3F4F6;">
+              <i class="bi bi-chat-heart fs-3 text-secondary"></i>
+            </div>
+            <p class="mb-0">No messages yet. Start the conversation!</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Message Input Area -->
+      <div class="p-3 bg-white border-top rounded-bottom">
+        <form method="post" class="m-0">
+          {% csrf_token %}
+          <div class="input-group">
+            <textarea name="content" rows="1" class="form-control shadow-none border-end-0 py-2 px-3 bg-light" placeholder="Type your message..." style="resize: none; border-radius: 24px 0 0 24px; border-color: #D1D5DB;" required oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 100) + 'px'"></textarea>
+            <button type="submit" class="btn btn-primary px-4 d-flex align-items-center justify-content-center shadow-none" style="border-radius: 0 24px 24px 0; background-color: var(--primary-color); border-color: var(--primary-color);">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Auto-scroll to bottom of chat
+  (function () {
+    var box = document.getElementById("chat-box");
+    if (box) {
+      box.scrollTop = box.scrollHeight;
+    }
+  })();
+</script>
+
+{% endblock main %}

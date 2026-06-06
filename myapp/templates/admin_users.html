@@ -1,0 +1,181 @@
+{% extends "parent.html" %}
+{% block main %}
+
+<div class="py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <h2 class="fw-bold m-0" style="color: var(--text-primary); letter-spacing: -0.02em;">Manage Users</h2>
+      <p class="text-muted m-0 mt-1">View registered users, update status, and manage access levels.</p>
+    </div>
+    <a href="{% url 'admin_dashboard' %}" class="btn-saas-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  {% if messages %}
+    <div class="mb-4">
+      {% for m in messages %}
+        <div class="alert alert-{{ m.tags|default:'info' }} saas-card border-0 py-2 px-3 text-sm mb-2" role="alert" style="border-left: 4px solid var(--{% if m.tags == 'error' or m.tags == 'danger' %}danger{% elif m.tags == 'success' %}success{% elif m.tags == 'warning' %}warning{% else %}primary{% endif %}-color) !important;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>{{ m }}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="saas-card border-0">
+    <div class="saas-card-body p-0">
+      {% if users %}
+        <div class="saas-table-wrapper border-0 rounded-0 shadow-none">
+          <table class="saas-table mb-0">
+            <thead>
+              <tr>
+                <th class="bg-transparent text-muted">User</th>
+                <th class="bg-transparent text-muted">Contact</th>
+                <th class="bg-transparent text-muted text-center">Reqs</th>
+                <th class="bg-transparent text-muted text-center">Status</th>
+                <th class="bg-transparent text-muted text-center">Roles</th>
+                <th class="bg-transparent text-muted">Joined</th>
+                <th class="bg-transparent text-muted text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                      {{ u.first_name|default:u.username|slice:":1"|upper }}
+                    </div>
+                    <div>
+                      <div class="fw-medium text-dark">{{ u.first_name|default:u.username }}</div>
+                      <div class="text-muted small">@{{ u.username }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-muted">{{ u.email|default:"-" }}</td>
+                <td class="text-center"><span class="saas-badge saas-badge-warning">{{ u.history_count }}</span></td>
+                
+                <td class="text-center">
+                  {% if u.is_active %}
+                    <span class="saas-badge saas-badge-success d-inline-flex align-items-center gap-1"><i class="bi bi-circle-fill" style="font-size: 5px;"></i> Active</span>
+                  {% else %}
+                    <span class="saas-badge bg-light text-muted border d-inline-flex align-items-center gap-1"><i class="bi bi-circle-fill" style="font-size: 5px;"></i> Inactive</span>
+                  {% endif %}
+                </td>
+
+                <td class="text-center">
+                  <div class="d-flex flex-column gap-1 align-items-center">
+                    {% if u.is_staff %}<span class="saas-badge saas-badge-primary" style="font-size: 0.65rem;">Staff</span>{% endif %}
+                    {% if u.is_superuser %}<span class="saas-badge saas-badge-danger" style="font-size: 0.65rem;">Superuser</span>{% endif %}
+                    {% if not u.is_staff and not u.is_superuser %}<span class="text-muted small">-</span>{% endif %}
+                  </div>
+                </td>
+
+                <td class="text-muted text-nowrap">{{ u.date_joined|date:"d M Y" }}</td>
+
+                <td class="text-end">
+                  {% if u != request.user %}
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--radius-md);">
+                        
+                        <!-- Toggle active -->
+                        <li>
+                          <form method="post" action="{% url 'admin_users' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ u.id }}">
+                            <input type="hidden" name="action" value="toggle_active">
+                            <button type="submit" class="dropdown-item py-2 text-sm {% if u.is_active %}text-warning{% else %}text-success{% endif %}">
+                              <i class="bi {% if u.is_active %}bi-pause-circle{% else %}bi-play-circle{% endif %} me-2"></i>
+                              {% if u.is_active %}Deactivate User{% else %}Activate User{% endif %}
+                            </button>
+                          </form>
+                        </li>
+
+                        <!-- Manage roles -->
+                        <li>
+                          <form method="post" action="{% url 'admin_users' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ u.id }}">
+                            <input type="hidden" name="action" value="{% if u.is_staff %}remove_staff{% else %}make_staff{% endif %}">
+                            <button type="submit" class="dropdown-item py-2 text-sm text-primary">
+                              <i class="bi bi-shield-check me-2"></i>
+                              {% if u.is_staff %}Remove Staff Role{% else %}Make Staff{% endif %}
+                            </button>
+                          </form>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <!-- Reset Password -->
+                        <li>
+                          <form method="post" action="{% url 'admin_users' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ u.id }}">
+                            <input type="hidden" name="action" value="reset_password">
+                            <button type="submit" class="dropdown-item py-2 text-sm text-dark js-reset-btn" data-username="{{ u.username }}">
+                              <i class="bi bi-key me-2"></i> Reset Password
+                            </button>
+                          </form>
+                        </li>
+
+                        <!-- Delete User -->
+                        <li>
+                          <form method="post" action="{% url 'admin_delete_user' u.id %}" class="js-delete-form" data-username="{{ u.username }}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item py-2 text-sm text-danger">
+                              <i class="bi bi-trash3 me-2"></i> Delete User
+                            </button>
+                          </form>
+                        </li>
+
+                      </ul>
+                    </div>
+                  {% else %}
+                    <span class="saas-badge bg-light text-muted">Current User</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-5 text-muted">
+          <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; background: #F3F4F6; color: #9CA3AF; border-radius: 50%;">
+            <i class="bi bi-people fs-2"></i>
+          </div>
+          <p class="mb-0 fw-medium">No users found.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- ============ JS (BOTTOM) ============ -->
+<script>
+  document.querySelectorAll(".js-reset-btn").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      var username = this.getAttribute("data-username") || "this user";
+      if (!confirm("Reset password for " + username + "?")) {
+        e.preventDefault();
+      }
+    });
+  });
+
+  document.querySelectorAll(".js-delete-form").forEach(function (form) {
+    form.addEventListener("submit", function (e) {
+      var username = this.getAttribute("data-username") || "this user";
+      if (!confirm("Are you sure you want to permanently delete user " + username + "? This action cannot be undone.")) {
+        e.preventDefault();
+      }
+    });
+  });
+</script>
+
+{% endblock main %}
