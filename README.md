@@ -79,7 +79,7 @@ Visit `http://localhost:8000` in your browser.
 
 The project is fully deployed and hosted on Vercel! You can view the live, production-ready application here:
 
-👉 **[Live Demo on Vercel](https://ai-powered-disease-prediction-system.vercel.app)** *(Note: Ephemeral memory is enabled, so test data resets periodically)*
+👉 **[Live Demo on Vercel](https://ai-powered-disease-prediction-syste-amber.vercel.app/)** *(Note: Ephemeral memory is enabled, so test data resets periodically)*
 
 ---
 
