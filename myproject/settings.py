@@ -81,6 +81,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 import dj_database_url
+import shutil
 
 DATABASES = {
     'default': {
@@ -88,6 +89,16 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+if os.getenv('VERCEL') == '1':
+    TMP_DB = '/tmp/db.sqlite3'
+    BUNDLED_DB = os.path.join(BASE_DIR, 'db.sqlite3')
+    
+    # Copy the bundled SQLite database to the writable /tmp directory if it doesn't exist
+    if not os.path.exists(TMP_DB) and os.path.exists(BUNDLED_DB):
+        shutil.copyfile(BUNDLED_DB, TMP_DB)
+        
+    DATABASES['default']['NAME'] = TMP_DB
 
 if os.getenv('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'), conn_max_age=600)
