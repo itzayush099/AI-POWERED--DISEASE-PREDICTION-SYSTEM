@@ -76,16 +76,15 @@ def create_or_update_profile(sender, instance, created, **kwargs):
 
 # ✅ NEW: Doctor model for admin-only doctor panel
 class Doctor(models.Model):
-    name = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="doctor_profile", null=True, blank=True)
     specialization = models.CharField(max_length=100, blank=True)
-    email = models.EmailField(blank=True)
-    phone = models.CharField(max_length=20, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        name = self.user.get_full_name() or self.user.username if self.user else "Unknown Doctor"
         if self.specialization:
-            return f"{self.name} ({self.specialization})"
-        return self.name
+            return f"{name} ({self.specialization})"
+        return name
 
 from django.db import models
 from django.contrib.auth.models import User

@@ -26,18 +26,18 @@
 
         <div class="mb-4">
           <label for="phone" class="saas-form-label">Phone Number</label>
-          <input type="tel" id="phone" name="phone" class="saas-form-control" placeholder="+1 (555) 000-0000" required>
+          <input type="tel" id="phone" name="phone" class="saas-form-control" placeholder="10-digit mobile number" required pattern="^[0-9]{10}$" title="Please enter a valid 10-digit phone number" maxlength="10">
         </div>
 
         <div class="row">
           <div class="col-md-6 mb-4">
             <label for="password" class="saas-form-label">Password</label>
-            <input type="password" id="password" name="password" class="saas-form-control" placeholder="Create a password" required>
+            <input type="password" id="password" name="password" class="saas-form-control" placeholder="Create a password" required minlength="6" title="Must be at least 6 characters">
           </div>
 
           <div class="col-md-6 mb-4">
             <label for="confirm" class="saas-form-label">Confirm Password</label>
-            <input type="password" id="confirm" name="confirm_password" class="saas-form-control" placeholder="Confirm your password" required>
+            <input type="password" id="confirm" name="confirm_password" class="saas-form-control" placeholder="Confirm your password" required minlength="6">
           </div>
         </div>
 
