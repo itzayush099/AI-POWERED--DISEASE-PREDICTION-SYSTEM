@@ -75,18 +75,11 @@ Visit `http://localhost:8000` in your browser.
 
 ---
 
-## ☁️ Vercel Deployment
+## ☁️ Live Deployment
 
-This project is pre-configured for **1-click deployment on Vercel** using `@vercel/python` and `whitenoise` for static files.
+The project is fully deployed and hosted on Vercel! You can view the live, production-ready application here:
 
-1. Create a free **PostgreSQL** database (e.g., using [Supabase](https://supabase.com) or [Neon](https://neon.tech)).
-2. Import this repository into your Vercel Dashboard.
-3. In Vercel's Environment Variables settings, add:
-   - `DATABASE_URL` (Your PostgreSQL connection string)
-   - `DEBUG=False`
-   - `SECRET_KEY` (Generate a secure random string)
-   - `EMAIL_HOST_USER` and `EMAIL_HOST_PASSWORD`
-4. Click **Deploy**. Vercel will automatically install `requirements.txt` and serve the application!
+👉 **[Live Demo on Vercel](https://ai-powered-disease-prediction-system.vercel.app)** *(Note: Ephemeral memory is enabled, so test data resets periodically)*
 
 ---
 
