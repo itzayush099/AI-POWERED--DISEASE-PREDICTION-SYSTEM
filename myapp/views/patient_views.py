@@ -126,7 +126,7 @@ def prediction(request):
                 else:
                     res = str(pred[0])
             except Exception as e:
-                messages.error(request, f"Model prediction error: {e}")
+                raise e
 
         # -----------------------------
         #      SAVE MEDICAL HISTORY
