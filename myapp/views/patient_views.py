@@ -36,6 +36,18 @@ from myapp.models import MedicalHistory, Profile, Doctor, Message
 
 MODEL = None
 LABEL_ENCODER = None
+FEATURES = [
+    "fever",
+    "headache",
+    "nausea",
+    "vomiting",
+    "fatigue",
+    "joint_pain",
+    "skin_rash",
+    "cough",
+    "weight_loss",
+    "yellow_eyes",
+]
 
 DISEASE_SPECIALITY_MAP = {
     "aids": "Infectious Disease Specialist",
