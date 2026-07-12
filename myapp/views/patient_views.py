@@ -90,6 +90,165 @@ DISEASE_SPECIALITY_MAP = {
     "vertigo (benign paroxysmal positional vertigo)": "Neurologist / ENT Specialist",
 }
 
+DISEASE_ADVICE_MAP = {
+    "aids": (
+        "Get regular follow-ups with an infectious disease specialist. "
+        "Take prescribed medicines regularly and avoid unprotected sex or needle sharing. "
+        "If you notice fever, weight loss, or new infections, seek medical help quickly."
+    ),
+    "acne": (
+        "Avoid squeezing or scratching pimples. Use gentle, non-oily skin products and keep your face clean. "
+        "If acne is severe or leaves marks, consult a dermatologist for proper treatment."
+    ),
+    "alcoholic hepatitis": (
+        "Completely avoid alcohol and follow a liver-friendly diet. "
+        "This condition can be serious, so consult a gastroenterologist or liver specialist as soon as possible."
+    ),
+    "allergy": (
+        "Try to identify and avoid the trigger (dust, food, medicine, etc.). "
+        "For repeated or severe reactions like swelling, breathing difficulty, or rashes, see an allergist or doctor immediately."
+    ),
+    "arthritis": (
+        "Gentle exercise, weight control, and avoiding stress on joints can help. "
+        "If you have persistent joint pain, swelling, or stiffness, consult a rheumatologist or orthopedic specialist."
+    ),
+    "bronchial asthma": (
+        "Avoid triggers like smoke, dust, and strong perfumes. Use your inhaler as prescribed. "
+        "If you feel tightness in chest or difficulty in breathing, seek medical help urgently."
+    ),
+    "cervical spondylosis": (
+        "Maintain good posture, avoid long periods of looking down at screens, and do neck exercises as advised. "
+        "If pain radiates to arms, or there is weakness or numbness, consult an orthopedic or spine specialist."
+    ),
+    "chronic cholestasis": (
+        "This suggests long-term liver or bile duct issues. Avoid alcohol and fatty foods. "
+        "Consult a gastroenterologist or hepatologist for detailed evaluation and tests."
+    ),
+    "dengue": (
+        "Take plenty of fluids, rest, and avoid self-medication with painkillers like ibuprofen without medical advice. "
+        "If you notice bleeding, severe stomach pain, or extreme weakness, go to a hospital immediately."
+    ),
+    "diabetes": (
+        "Follow a balanced, low-sugar diet, exercise regularly, and check your blood sugar as advised. "
+        "Consult an endocrinologist or physician to adjust medicines and avoid complications."
+    ),
+    "dimorphic hemorrhoids(piles)": (
+        "Avoid constipation by drinking water and eating fiber-rich foods. "
+        "If pain, bleeding, or swelling continue, consult a general or colorectal surgeon for proper treatment."
+    ),
+    "drug reaction": (
+        "Stop the suspected medicine only after talking to a doctor. "
+        "Do not restart medicines that caused severe rashes or swelling. "
+        "If there is breathing difficulty, swelling of lips/face, or high fever, seek emergency care."
+    ),
+    "gerd": (
+        "Avoid spicy, oily, and very late-night meals. Do not lie down immediately after eating. "
+        "If you have frequent burning in the chest or sour taste in mouth, consult a gastroenterologist."
+    ),
+    "gastroenteritis": (
+        "Take plenty of clean fluids to avoid dehydration and eat light food. "
+        "If vomiting or loose motions are severe, or there is blood in stool, consult a doctor quickly."
+    ),
+    "heart attack": (
+        "This is a medical emergency. Pain or heaviness in chest, sweating, breathing difficulty, or pain radiating to arm/jaw "
+        "needs immediate hospital care and cardiology consultation."
+    ),
+    "hepatitis a": (
+        "Usually spreads through contaminated food or water. Take rest, avoid oily food and alcohol, and drink safe water. "
+        "Follow a gastroenterologist’s advice and get liver function tests as recommended."
+    ),
+    "hepatitis b": (
+        "Can affect the liver for a long time. Avoid alcohol, do not share razors/needles, and follow your doctor’s advice about antiviral treatment. "
+        "Family members may also need screening and vaccination."
+    ),
+    "hepatitis c": (
+        "This can become chronic. Regular follow-up with a liver specialist is important. "
+        "Avoid alcohol and get tests as advised to monitor liver health."
+    ),
+    "hepatitis d": (
+        "Often occurs along with hepatitis B. This needs specialist care. "
+        "Follow your hepatologist’s advice carefully and avoid alcohol and unsafe injections."
+    ),
+    "hepatitis e": (
+        "Usually spreads through contaminated water. Take rest, avoid alcohol and heavy food, and drink clean, boiled or filtered water. "
+        "Pregnant women with jaundice must seek urgent medical attention."
+    ),
+    "hypertension": (
+        "Reduce salt intake, manage stress, exercise regularly, and take prescribed tablets regularly. "
+        "Do not stop blood pressure medicines on your own. Regular blood pressure checks are important."
+    ),
+    "hyperthyroidism": (
+        "Watch for symptoms like weight loss, palpitations, or anxiety. "
+        "Consult an endocrinologist to control hormone levels and adjust medicines as needed."
+    ),
+    "hypoglycemia": (
+        "Low blood sugar can be dangerous. Keep some quick sugar source like glucose or sweet juice with you. "
+        "If episodes are frequent, meet your doctor to adjust diabetes or other medicines."
+    ),
+    "hypothyroidism": (
+        "Take thyroid medicine regularly on an empty stomach as advised. "
+        "Do not change dose without consulting your doctor. Regular thyroid tests help keep levels stable."
+    ),
+    "impetigo": (
+        "This is a contagious skin infection. Maintain good hygiene and avoid sharing towels or clothes. "
+        "Consult a dermatologist or doctor for proper antibiotics."
+    ),
+    "jaundice": (
+        "Yellow eyes/skin suggest a liver or bile problem. Avoid alcohol and heavy food. "
+        "Consult a doctor or gastroenterologist for tests to find the cause of jaundice."
+    ),
+    "malaria": (
+        "Take plenty of fluids and rest. Antimalarial treatment must be guided by a doctor. "
+        "High fever with chills, vomiting, or confusion need urgent medical care."
+    ),
+    "migraine": (
+        "Rest in a dark, quiet room, avoid loud noise and screen strain, and stay hydrated. "
+        "Track triggers like certain foods or lack of sleep. A neurologist can help with preventive medicines."
+    ),
+    "osteoarthritis": (
+        "Maintain a healthy weight, keep joints active with gentle exercise, and avoid overloading painful joints. "
+        "If pain is persistent or movement is limited, consult an orthopedic specialist or rheumatologist."
+    ),
+    "paralysis (brain hemorrhage)": (
+        "Sudden weakness of face, arm, or leg; difficulty in speaking; or sudden loss of balance is an emergency. "
+        "Immediate hospital care and neurologist evaluation are critical."
+    ),
+    "peptic ulcer disease": (
+        "Avoid spicy, acidic foods, smoking, and alcohol. Do not take painkillers like NSAIDs without medical advice. "
+        "Consult a gastroenterologist for proper tests and treatment."
+    ),
+    "pneumonia": (
+        "Cough with fever, chest pain, and breathing difficulty can be serious. "
+        "Plenty of rest, fluids, and early medical treatment from a pulmonologist or physician are important."
+    ),
+    "psoriasis": (
+        "Avoid harsh soaps and keep skin moisturized. Stress and smoking can worsen symptoms. "
+        "A dermatologist can advise creams, tablets, or other therapies for long-term control."
+    ),
+    "tuberculosis": (
+        "Take anti-TB medicines exactly as prescribed and do not stop early. "
+        "Cover your mouth while coughing and ensure good ventilation. Follow up regularly with your doctor."
+    ),
+    "typhoid": (
+        "Drink clean, boiled or filtered water and avoid roadside or unhygienic food. "
+        "Complete the full antibiotic course if prescribed and take adequate rest."
+    ),
+    "urinary tract infection": (
+        "Drink plenty of water and do not hold urine for long periods. "
+        "If you have burning urination, fever, or side/back pain, consult a doctor or urologist for proper antibiotics."
+    ),
+    "varicose veins": (
+        "Avoid standing for very long, elevate your legs when resting, and maintain a healthy weight. "
+        "Compression stockings and a vascular surgeon’s opinion can help in advanced cases."
+    ),
+    "vertigo (benign paroxysmal positional vertigo)": (
+        "Avoid sudden head movements and get up slowly from lying or sitting positions. "
+        "If vertigo is frequent, consult a neurologist or ENT specialist for proper exercises and evaluation."
+    ),
+}
+
+
+
 
 @login_required(login_url="login")
 def index(request):
@@ -458,9 +617,9 @@ def profile_view(request):
     })
 
 def _get_model_paths():
-    base_dir = os.path.dirname(__file__)  # myapp directory
-    model_path = os.path.join(base_dir, "best_model.pkl")
-    le_path = os.path.join(base_dir, "label_encoder.pkl")
+    from django.conf import settings
+    model_path = os.path.join(settings.BASE_DIR, "myapp", "best_model.pkl")
+    le_path = os.path.join(settings.BASE_DIR, "myapp", "label_encoder.pkl")
     return model_path, le_path
 
 def load_model():

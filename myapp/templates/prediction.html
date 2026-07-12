@@ -81,14 +81,14 @@
                       <div class="p-3 border rounded h-100 bg-light transition-all" style="border-color: var(--border-color) !important;">
                         <div class="d-flex align-items-center gap-2 mb-2">
                           <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;">
-                            {{ d.name|slice:":1"|upper }}
+                            {{ d.user.get_full_name|default:d.user.username|slice:":1"|upper }}
                           </div>
-                          <h6 class="fw-bold m-0 text-dark text-truncate" title="{{ d.name }}">{{ d.name }}</h6>
+                          <h6 class="fw-bold m-0 text-dark text-truncate" title="{{ d.user.get_full_name|default:d.user.username }}">{{ d.user.get_full_name|default:d.user.username }}</h6>
                         </div>
                         <div class="text-sm text-muted">
                           {% if d.specialization %}<div class="mb-1"><i class="bi bi-stars me-1"></i> {{ d.specialization }}</div>{% endif %}
-                          {% if d.email %}<div class="mb-1 text-truncate" title="{{ d.email }}"><i class="bi bi-envelope me-1"></i> {{ d.email }}</div>{% endif %}
-                          {% if d.phone %}<div class="m-0"><i class="bi bi-telephone me-1"></i> {{ d.phone }}</div>{% endif %}
+                          {% if d.user.email %}<div class="mb-1 text-truncate" title="{{ d.user.email }}"><i class="bi bi-envelope me-1"></i> {{ d.user.email }}</div>{% endif %}
+                          {% if d.user.profile.phone %}<div class="m-0"><i class="bi bi-telephone me-1"></i> {{ d.user.profile.phone }}</div>{% endif %}
                         </div>
                       </div>
                     </div>

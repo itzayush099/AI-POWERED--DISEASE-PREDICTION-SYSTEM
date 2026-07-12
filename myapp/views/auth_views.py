@@ -11,6 +11,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count, Q
 from django.utils.crypto import get_random_string
 from myapp.models import MedicalHistory, Profile, Doctor, Message, DoctorApplication
+import random
+from django.core.mail import send_mail
+
 
 
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
